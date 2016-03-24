@@ -1,0 +1,8 @@
+#v6_pl_content_biztips, #v6_pl_rightmod_ads35, #v6_pl_rightmod_ads36, .WB_frame_bottom {
+	display: none !important;
+}
+
+.WB_feed_v3 .WB_media_a li {
+	width: 128px !important;
+	height: 128px !important;
+}
