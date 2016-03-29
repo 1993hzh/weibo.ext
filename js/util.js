@@ -36,6 +36,9 @@ Util.storage = {
         });
     },
 
+    /**
+     * NOTICE: here we may got some errors due to the storage maxium size limit
+     */
     setValue: function(key, value, callback) {
         var object = {};
         object[key] = value;
@@ -50,5 +53,29 @@ Util.storage = {
                 callback(result);
             }
         });
+    }
+};
+
+Util.file = {
+    read: function(path, callback) {
+        chrome.fileSystem.chooseEntry({
+            type: 'openFile'
+        }, function(fileEntry) {
+            fileEntry.file(function(file) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    var text = this.result;
+                    console.log(text);
+                    if (callback) {
+                        callback(text);
+                    }
+                };
+                reader.readAsText(file);
+            });
+        });
+    },
+
+    write: function() {
+
     }
 };

@@ -23,7 +23,7 @@ Setup.showResult = function(result) {
 };
 
 Setup.load = function() {
-    var options = ["messageOption", "blockOption", "diyCss"];
+    var options = ["messageOption", "blockOption", "diyCss", "blockedPerson"];
 
     // load messageOption
     Util.storage.getValue(options[0], function(obj) {
@@ -43,6 +43,18 @@ Setup.load = function() {
     Util.storage.getValue(options[2], function(obj) {
         if (!Util.storage.isEmpty(obj)) {
             document.getElementById(options[2]).innerHTML = obj[options[2]];
+        }
+    });
+
+    // load blocked person
+    Util.storage.getValue(options[3], function(obj) {
+        if (!Util.storage.isEmpty(obj)) {
+            var person = obj[options[3]];
+            var targetNode = document.getElementById(options[3]);
+            for (i in person) {
+                var newNode = Setup.createBlockNodes(person[i].id, person[i].name);
+                targetNode.appendChild(newNode);
+            }
         }
     });
 };
@@ -81,6 +93,44 @@ Setup.registerDiyCssHandler = function() {
         e.currentTarget.setAttribute("contentEditable", false);
         Util.storage.setValue("diyCss", diyCss.innerHTML, Setup.showResult);
     }, false);
+};
+
+Setup.close = function(e) {
+	var targetNode = e.currentTarget.parentElement;
+    var id = targetNode.getAttribute("id");
+    if (!id) {
+    	Setup.showResult(Util.opt(false, "No target id found."));
+    	return false;
+    }
+    Util.storage.getValue("blockedPerson", function(obj) {
+        if (!Util.storage.isEmpty(obj)) {
+            var blockedPersonNew = obj["blockedPerson"].filter(function(person) {
+                return person.id != id;
+            });
+            Util.storage.setValue("blockedPerson", blockedPersonNew, Setup.showResult);
+            targetNode.remove();
+        }
+    });
+};
+
+Setup.createBlockNodes = function(id, name) {
+    var span = document.createElement("span");
+    span.setAttribute("class", "label label-default");
+    span.setAttribute("id", id);
+    var text = document.createTextNode(name);
+    span.appendChild(text);
+
+    var href = document.createElement("a");
+    href.setAttribute("href", "javascript:void(0)");
+    href.setAttribute("class", "blockedPersonHref closed");
+    href.addEventListener("click", Setup.close, false);
+
+    var fa = document.createElement("i");
+    fa.setAttribute("class", "fa fa-times");
+
+    href.appendChild(fa);
+    span.appendChild(href);
+    return span;
 };
 
 document.addEventListener("DOMContentLoaded", function(event) {
