@@ -14,19 +14,39 @@
         "default_title": "Chrome extension for weibo. Powered by Leo."
     },
     "background": {
-        "scripts": ["background.js", "js/util.js"],
+        "scripts": ["js/util.js", "background.js"],
         "persistent": false
     },
     "options_ui": {
         "page": "setup.html",
         "chrome_style": true
     },
-    "content_scripts": [{
-        "include_globs": ["*"],
-        "matches": ["*://*.weibo.com/*"],
-        "js": ["js/blockPerson.js"],
-        "css": ["css/weibo.css"],
-        "run_at": "document_end"
-    }],
+    "content_scripts": [
+        {
+            "include_globs": [
+                "*"
+            ],
+            "matches": [
+                "*://*.weibo.com/*"
+            ],
+            "js": [
+                "js/blockPerson.js"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "include_globs": [
+                "*"
+            ],
+            "matches": [
+                "*://*.weibo.com/*"
+            ],
+            "js": [
+                "js/diyCSS.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    
     "permissions": ["*://*.weibo.com/*", "cookies", "notifications", "tabs", "storage"]
 }

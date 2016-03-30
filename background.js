@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         case "getCSS":
             Util.storage.getValue("diyCss", function (obj) {
                 sendResponse({
-                    css: obj["diyCss"]
+                    result: Util.opt(true, obj["diyCss"])
                 });
             });
             return true;

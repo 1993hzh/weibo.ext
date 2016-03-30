@@ -42,7 +42,7 @@ Setup.load = function() {
     // load diy css
     Util.storage.getValue(options[2], function(obj) {
         if (!Util.storage.isEmpty(obj)) {
-            document.getElementById(options[2]).innerHTML = obj[options[2]];
+            document.getElementById(options[2]).textContent = obj[options[2]];
         }
     });
 
@@ -91,7 +91,7 @@ Setup.registerDiyCssHandler = function() {
     // register onblur handler
     diyCss.addEventListener("blur", function(e) {
         e.currentTarget.setAttribute("contentEditable", false);
-        Util.storage.setValue("diyCss", diyCss.innerHTML, Setup.showResult);
+        Util.storage.setValue("diyCss", diyCss.textContent, Setup.showResult);
     }, false);
 };
 

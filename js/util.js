@@ -60,6 +60,7 @@ Util.storage = {
     }
 };
 
+//TODO
 Util.file = {
     read: function(path, callback) {
         chrome.fileSystem.chooseEntry({
