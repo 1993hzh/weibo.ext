@@ -5,3 +5,14 @@
 .opt-result {
     display: none;
 }
+
+#blockedPerson {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#blockedPerson > .label {
+    margin-right: 10px;
+    padding: 5px;
+    font-size: small;
+}
