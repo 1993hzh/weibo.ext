@@ -7,6 +7,10 @@ Util.opt = function(result, msg) {
     };
 };
 
+Util.nodeListToArray = function(nodeList) {
+    return Array.prototype.slice.call(nodeList);
+};
+
 Util.cookie = {
     getCookie: function(url, cookieName, callback) {
         if (!chrome.cookies) {

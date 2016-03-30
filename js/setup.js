@@ -65,7 +65,7 @@ Setup.registerRadioHandler = function() {
         Setup.showResult(Util.opt(false, "Cannot find any radios here."));
         return;
     }
-    var radioArray = Array.prototype.slice.call(radios);
+    var radioArray = Util.nodeListToArray(radios);
     radioArray.forEach(function(r) {
         r.addEventListener("click", function(e) {
             var key = e.currentTarget.getAttribute("name");

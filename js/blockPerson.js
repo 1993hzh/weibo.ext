@@ -1,6 +1,10 @@
-var blockPerson = {};
+var BlockPerson = {};
 
-blockPerson.block = function(id, name, callback) {
+BlockPerson.nodeListToArray = function(nodeList) {
+    return Array.prototype.slice.call(nodeList);
+};
+
+BlockPerson.block = function(id, name, callback) {
     chrome.runtime.sendMessage({
         method: "blockPerson",
         id: id,
@@ -15,14 +19,14 @@ blockPerson.block = function(id, name, callback) {
     });
 };
 
-blockPerson.remove = function(id) {
+BlockPerson.remove = function (id) {
     var nodeList = document.querySelectorAll("div[tbinfo*='" + id + "']");
-    for (i in nodeList) {
-        nodeList[i].remove();
-    }
+    BlockPerson.nodeListToArray(nodeList).forEach(function (elem) {
+        elem.remove();
+    });
 };
 
-blockPerson.getParameterByName = function(name, str) {
+BlockPerson.getParameterByName = function(name, str) {
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(str);
     if (!results) return null;
@@ -30,24 +34,24 @@ blockPerson.getParameterByName = function(name, str) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
 
-blockPerson.registerHandler = function() {
-    var block = document.querySelectorAll("a[action-type='feed_list_shield_novip']");
-    for (i in block) {
-        block[i].addEventListener("click", function(e) {
+BlockPerson.registerHandler = function () {
+    var blocks = document.querySelectorAll("a[action-type='feed_list_shield_novip']");
+    BlockPerson.nodeListToArray(blocks).forEach(function (elem) {
+        elem.addEventListener("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
 
             var data = e.currentTarget.getAttribute("action-data");
-            var id = blockPerson.getParameterByName("uid", data);
-            var name = blockPerson.getParameterByName("nickname", data);
-            blockPerson.block(id, name, function() {
-                blockPerson.remove(id);
+            var id = BlockPerson.getParameterByName("uid", data);
+            var name = BlockPerson.getParameterByName("nickname", data);
+            BlockPerson.block(id, name, function () {
+                BlockPerson.remove(id);
             });
         }, false);
-    }
+    });
 };
 
-blockPerson.getBlocked = function(callback) {
+BlockPerson.getBlocked = function(callback) {
     chrome.runtime.sendMessage({
         method: "getBlockedPerson"
     }, function(response) {
@@ -55,19 +59,25 @@ blockPerson.getBlocked = function(callback) {
     });
 };
 
-blockPerson.getBlockedCallback = function(result) {
+BlockPerson.getBlockedCallback = function(result) {
     if (result.result) {
-        result.msg.forEach(function(elem) {
-            blockPerson.remove(elem.id);
-        });
+        (function () {
+            result.msg.forEach(function (elem) {
+                BlockPerson.remove(elem.id);
+            });
+        })();
     } else {
         alert(result.msg);
     }
 };
 
-blockPerson.init = function() {
-    blockPerson.getBlocked(blockPerson.getBlockedCallback);
-    blockPerson.registerHandler();
+BlockPerson.init = function() {
+    BlockPerson.getBlocked(BlockPerson.getBlockedCallback);
+    BlockPerson.registerHandler();
 };
 
-blockPerson.init();
+document.onreadystatechange = function () {
+    if (document.querySelector("div[node-type='homefeed']")) {
+        BlockPerson.init();
+    }
+};
