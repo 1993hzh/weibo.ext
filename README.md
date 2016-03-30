@@ -19,6 +19,7 @@ Enjoy it!! Remember to create issues for any problem.
 //TODO
 
 ### DIY css
+//To be improved
 You can write any css in the Options Page, that means you can do whatever you want include hiding all ads by yourself.
 
 ### Block targeted person that you dislike even if you are not a weibo VIP
