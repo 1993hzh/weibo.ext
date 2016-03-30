@@ -14,8 +14,16 @@ You will see a button at the upper right corner in your browser.
 
 Enjoy it!! Remember to create issues for any problem.
 
-### Hide all the ads
+## What the extension can do?
 ### New messages notification
+//TODO
+
 ### DIY css
-### Block without VIP
-### Focus on target person //To be decided
+You can write any css in the Options Page, that means you can do whatever you want include hiding all ads by yourself.
+
+### Block targeted person that you dislike even if you are not a weibo VIP
+You can click the block button for target person and it will not show any message indicates that you cannot do this since you are not weibo VIP.
+You can remove the blocked person in Options Page, or disable this feature for any reason.
+
+### Focus on target person
+//To be decided
