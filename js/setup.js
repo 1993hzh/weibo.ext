@@ -1,5 +1,21 @@
 var Setup = {};
 
+Setup.attrMap = {
+    "status": "新微博未读数",
+    "follower": "新粉丝数",
+    "cmt": "新评论数",
+    "dm": "新私信数",
+    "mention_status": "新提及我的微博数",
+    "mention_cmt": "新提及我的评论数",
+    "group": "微群消息未读数",
+    "private_group": "私有微群消息未读数",
+    "notice": "新通知未读数",
+    "invite": "新邀请未读数",
+    "badge": "新勋章数",
+    "photo": "相册消息未读数",
+    "msgbox": "{{{3}}}（这什么我也不知道啊！新浪API说明就是这个鬼啊摔！）"
+};
+
 Setup.showResult = function(result) {
     var success = document.getElementById("success");
     var fail = document.getElementById("fail");
@@ -34,12 +50,16 @@ Setup.showResult = function(result) {
 };
 
 Setup.load = function() {
-    var options = ["messageOption", "blockOption", "diyCss", "blockedPerson"];
+    var options = ["messageOption", "blockOption", "diyCssDisplay", "blockedPerson"];
 
     // load messageOption
     Util.storage.getValue(options[0], function(obj) {
         var value = !Util.storage.isEmpty(obj) ? obj[options[0]] : true;
         document.querySelector("input[name=" + options[0] + "][value=" + value +"]").setAttribute("checked", true);
+
+        Object.keys(Setup.attrMap).forEach(function(key) {
+            Setup.createNotificationCheckBox(key, Setup.attrMap[key], document.getElementById("notification"))
+        });
     });
 
     // load blockOption
@@ -64,9 +84,13 @@ Setup.load = function() {
     });
 
     // load diy css
-    Util.storage.getValue(options[2], function(obj) {
+    Setup.loadDiyCSS(options[2]);
+};
+
+Setup.loadDiyCSS = function(name) {
+	Util.storage.getValue(name, function(obj) {
         if (!Util.storage.isEmpty(obj)) {
-            document.getElementById(options[2]).textContent = obj[options[2]];
+            document.getElementById("diyCss").innerHTML = obj[name];
         }
     });
 };
@@ -109,21 +133,43 @@ Setup.registerBlockOptionHandler = function() {
 
 Setup.registerDiyCssHandler = function() {
     var diyCss = document.getElementById("diyCss");
+    var cancel = document.getElementById("cancel");
+    var save = document.getElementById("save");
     if (!diyCss) {
         Setup.showResult(Util.opt(false, "Cannot find diy css here."));
         return;
     }
 
+    var enableButtons = function() {
+        save.removeAttribute("disabled");
+        cancel.removeAttribute("disabled");
+    };
+
+    var disableButtons = function() {
+    	save.setAttribute("disabled", "disabled");
+        cancel.setAttribute("disabled", "disabled");
+    };
+
     // register double click handler
     diyCss.addEventListener("dblclick", function(e) {
-        e.currentTarget.setAttribute("contentEditable", true);
+        e.currentTarget.setAttribute("contenteditable", true);
         e.currentTarget.focus();
+        enableButtons();
     }, false);
 
-    // register onblur handler
-    diyCss.addEventListener("blur", function(e) {
-        e.currentTarget.setAttribute("contentEditable", false);
+    // register cancel handler
+    cancel.addEventListener("click", function(e) {
+        Setup.loadDiyCSS("diyCssDisplay");
+        diyCss.setAttribute("contenteditable", false);
+        disableButtons();
+    }, false);
+
+    // register save handler
+    save.addEventListener("click", function(e) {
+        diyCss.setAttribute("contenteditable", false);
         Util.storage.setValue("diyCss", diyCss.textContent, Setup.showResult);
+        Util.storage.setValue("diyCssDisplay", diyCss.innerHTML, Setup.showResult);
+        disableButtons();
     }, false);
 };
 
@@ -143,6 +189,19 @@ Setup.close = function(e) {
             targetNode.remove();
         }
     });
+};
+
+Setup.createNotificationCheckBox = function(value, displayName, parent) {
+	var label = document.createElement("label");
+	label.className = "my-label";
+    var checkBox = document.createElement("input");
+    checkBox.type = "checkbox";
+    checkBox.name = "notificationCheckBox";
+    checkBox.value = value;
+    label.appendChild(checkBox);
+
+	label.appendChild(document.createTextNode(displayName));
+    parent.appendChild(label);
 };
 
 Setup.createBlockNodes = function(id, name) {
@@ -167,6 +226,8 @@ Setup.createBlockNodes = function(id, name) {
 
 document.addEventListener("DOMContentLoaded", function(event) {
     Setup.load();
+    // prettyPrint();
+    // document.getElementById("diyCss").setAttribute("class", "prettyprint lang-css");
 
     Setup.registerBlockOptionHandler();
     Setup.registerRadioHandler();

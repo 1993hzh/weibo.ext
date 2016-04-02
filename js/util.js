@@ -60,27 +60,24 @@ Util.storage = {
     }
 };
 
-//TODO
-Util.file = {
-    read: function(path, callback) {
-        chrome.fileSystem.chooseEntry({
-            type: 'openFile'
-        }, function(fileEntry) {
-            fileEntry.file(function(file) {
-                var reader = new FileReader();
-                reader.onloadend = function() {
-                    var text = this.result;
-                    console.log(text);
-                    if (callback) {
-                        callback(text);
-                    }
-                };
-                reader.readAsText(file);
-            });
-        });
+Util.url = {
+    getUrl: function(url) {
+        if (url.indexOf("?") > -1) {
+            url = url.substr(0, url.indexOf("?"));
+        }
+        return url;
     },
 
-    write: function() {
+    getParam: function(url, name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(url) || [, ""])[1].replace(/\+/g, '%20')) || null;
+    },
 
+    setParam: function(url, name, value) {
+        url += (url.split('?')[1] ? '&' : '?') + (name + "=" + value);
+        return url;
+    },
+
+    getParams: function(url) {
+        //TODO
     }
 };

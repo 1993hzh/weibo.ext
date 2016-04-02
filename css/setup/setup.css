@@ -16,3 +16,35 @@
     padding: 5px;
     font-size: small;
 }
+
+#diyCss {
+	width: 100%;
+	margin: 10px 0px 15px 0px;
+}
+
+.container {
+	width: 60%;
+}
+
+.table .my-td-1 {
+	width: 20%;
+	min-width: 150px;
+}
+
+.table .my-td-2 {
+	width: 80% !important;
+	min-width: 450px;
+}
+
+#notification {
+	margin: 10px 0px 10px 0px;
+}
+
+.my-label {
+	display: block !important;
+	font-weight: normal !important;
+}
+
+.my-label > input{
+	margin: 0px 5px 0px 0px;
+}
