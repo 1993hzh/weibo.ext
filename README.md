@@ -18,7 +18,7 @@ Enjoy it!! Remember to create issues for any problem.
 ### New messages notification
 //To be improved
 
-You can choose what to notificate you and set the check time in Options Page, of course you can disable this feature at you own.
+You can choose what to notify you and set the check time in Options Page, of course you can disable this feature at you own.
 
 ### Block targeted person that you dislike even if you are not a weibo VIP
 You can click the block button for target person and it will not show any message indicates that you cannot do this since you are not weibo VIP.
