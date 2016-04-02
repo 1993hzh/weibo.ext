@@ -16,15 +16,18 @@ Enjoy it!! Remember to create issues for any problem.
 
 ## What the extension can do?
 ### New messages notification
-//TODO
-
-### DIY css
 //To be improved
-You can write any css in the Options Page, that means you can do whatever you want include hiding all ads by yourself.
+
+You can choose what to notificate you and set the check time in Options Page, of course you can disable this feature at you own.
 
 ### Block targeted person that you dislike even if you are not a weibo VIP
 You can click the block button for target person and it will not show any message indicates that you cannot do this since you are not weibo VIP.
 You can remove the blocked person in Options Page, or disable this feature for any reason.
+
+### DIY css
+//To be improved
+
+You can write any css in the Options Page, that means you can do whatever you want include hiding all ads by yourself.
 
 ### Focus on target person
 //To be decided
