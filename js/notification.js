@@ -42,15 +42,20 @@ Notification.prototype.parseUnreadJSON = function(json) {
     var message = "";
 
     json = JSON.parse(json);
-    Object.keys(Background.attrMap).forEach(function(key) {
-        if (json[key] && json[key] > 0) {
-            isCreateNotification = true;
-            message += Background.attrMap[key] + ": " + json[key] + "\n";
-        }
-    });
-
+    var getNotifications = function(array) {
+        array.forEach(function(key) {
+            if (json[key] && json[key] > 0) {
+                isCreateNotification = true;
+                message += Global.attrMap[key] + ": " + json[key] + "\n";
+            }
+        });
+    };
+    Background.getNotificationKeys(getNotifications);
     if (isCreateNotification) {
+        console.log(new Date() + ": decide to send a notification.");
         this.createNotification(message.substring(0, message.lastIndexOf("\n")));
+    } else {
+        console.log(new Date() + ": no notification to send.");
     }
 };
 
@@ -83,10 +88,7 @@ Notification.prototype.createNotification = function(msg, callback) {
         }
     };
 
-    // upsert(self.notificationId, options, function(notificationId) {
-    //     Background.unreadMsg.notificationId = notificationId;
-    // });
-    upsert("", options, function(notificationId) {
+    upsert(self.notificationId, options, function(notificationId) {
         Background.unreadMsg.notificationId = notificationId;
     });
 };

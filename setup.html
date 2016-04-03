@@ -16,6 +16,7 @@
     <script src="bootstrap/jquery.min.js"></script>
     <script src="bootstrap/bootstrap.min.js"></script>
     <script src="prettify/prettify.js"></script>
+    <script src="js/global.js"></script>
     <script src="js/util.js"></script>
     <script src="js/setup.js"></script>
     <title>设置</title>
@@ -42,8 +43,9 @@
                             <input type="radio" name="messageOption" value="false">否
                         </label>
                         <div id="notification">
-                            <label class="my-label">间隔时间(min)
-                                <input type="text" name="checkTime" value="15">
+                            <label class="my-label">间隔时间(min)：
+                                <input type="text" name="checkTime" id="checkTime">
+                                <button type="button" class="btn btn-primary" id="saveTime">保存</button>
                             </label>
                         </div>
                     </td>

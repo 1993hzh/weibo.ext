@@ -14,7 +14,7 @@
         "default_title": "Chrome extension for weibo. Powered by Leo."
     },
     "background": {
-        "scripts": ["js/util.js", "js/notification.js", "background.js"],
+        "scripts": ["js/global.js", "js/util.js", "js/notification.js", "background.js"],
         "persistent": true
     },
     "options_ui": {

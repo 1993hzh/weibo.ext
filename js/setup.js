@@ -1,21 +1,5 @@
 var Setup = {};
 
-Setup.attrMap = {
-    "status": "新微博未读数",
-    "follower": "新粉丝数",
-    "cmt": "新评论数",
-    "dm": "新私信数",
-    "mention_status": "新提及我的微博数",
-    "mention_cmt": "新提及我的评论数",
-    "group": "微群消息未读数",
-    "private_group": "私有微群消息未读数",
-    "notice": "新通知未读数",
-    "invite": "新邀请未读数",
-    "badge": "新勋章数",
-    "photo": "相册消息未读数",
-    "msgbox": "{{{3}}}（这什么我也不知道啊！新浪API说明就是这个鬼啊摔！）"
-};
-
 Setup.showResult = function(result) {
     var success = document.getElementById("success");
     var fail = document.getElementById("fail");
@@ -50,15 +34,30 @@ Setup.showResult = function(result) {
 };
 
 Setup.load = function() {
-    var options = ["messageOption", "blockOption", "diyCssDisplay", "blockedPerson"];
+    var options = ["messageOption", "blockOption", "diyCssDisplay", "blockedPerson", "notificationOptions", "checkTime"];
 
     // load messageOption
     Util.storage.getValue(options[0], function(obj) {
         var value = !Util.storage.isEmpty(obj) ? obj[options[0]] : true;
         document.querySelector("input[name=" + options[0] + "][value=" + value +"]").setAttribute("checked", true);
+        if (value === "false") {
+            document.getElementById("notification").style.display = "none";
+        }
 
-        Object.keys(Setup.attrMap).forEach(function(key) {
-            Setup.createNotificationCheckBox(key, Setup.attrMap[key], document.getElementById("notification"))
+        Util.storage.getValue(options[4], function(notification) {
+            var array = notification[options[4]];
+            Object.keys(Global.attrMap).forEach(function(key) {
+                Setup.createNotificationCheckBox(key, Global.attrMap[key], document.getElementById("notification"), array && array.indexOf(key) !== -1)
+            });
+        });
+
+        Util.storage.getValue(options[5], function(checkTime) {
+            var time = checkTime[options[5]];
+            if (time) {
+                document.getElementById("checkTime").value = time;
+            } else {
+                document.getElementById("checkTime").value = "15";
+            }
         });
     });
 
@@ -107,6 +106,26 @@ Setup.registerRadioHandler = function() {
             var key = e.currentTarget.getAttribute("name");
             var value = e.currentTarget.getAttribute("value");
             Util.storage.setValue(key, value, Setup.showResult);
+        }, false);
+    });
+};
+
+Setup.registerMessageOptionHandler = function() {
+    var messageOptions = document.getElementsByName('messageOption');
+    if (!messageOptions) {
+        Setup.showResult(Util.opt(false, "Cannot find messageOption here."));
+        return;
+    }
+    var messageOptionArray = Util.nodeListToArray(messageOptions);
+    messageOptionArray.forEach(function(r) {
+        r.addEventListener("change", function(e) {
+            var value = e.currentTarget.getAttribute("value");
+            var div = document.getElementById("notification");
+            if (value === "false") {
+                div.style.display = "none";
+            } else {
+                div.style.display = "block";
+            }
         }, false);
     });
 };
@@ -173,6 +192,47 @@ Setup.registerDiyCssHandler = function() {
     }, false);
 };
 
+Setup.registerCheckBoxHandler = function(checkbox) {
+    checkbox.addEventListener("change", function(e) {
+        var self = this;
+        var target = e.target;
+        var value = target.getAttribute("value");
+        Util.storage.getValue("notificationOptions", function(obj) {
+            var array = obj.notificationOptions || [];
+            var index = array.indexOf(value);
+            if (target.checked && index === -1) {
+                array.push(value);
+            } else if (!target.checked && index !== -1) {
+                array.splice(index, 1);
+            }
+            Util.storage.setValue("notificationOptions", array, Setup.showResult);
+        });
+    }, false);
+};
+
+Setup.registerCheckTimeHandler = function() {
+    var saveTime = document.getElementById("saveTime");
+    if (!saveTime) {
+        console.log("No button named saveTime found.");
+        return false;
+    }
+    saveTime.addEventListener("click", function(e) {
+        var value = document.getElementById("checkTime").value;
+        if (!value) {
+            console.log("No input named checkTime found.");
+            return false;
+        }
+        if (value <= 0) {
+            Setup.showResult(Util.opt(false, "检查时间不能小于等于0."));
+            return false;
+        }
+        Util.storage.setValue("checkTime", value, Setup.showResult);
+        // here we need to reschedule the job
+        // actually we need to first check if the messageOption is really enabled
+        chrome.extension.getBackgroundPage().Background.scheduleGetUnreadMsgJob();
+    }, false);
+};
+
 Setup.close = function(e) {
     var targetNode = e.currentTarget.parentElement;
     var id = targetNode.getAttribute("id");
@@ -191,13 +251,15 @@ Setup.close = function(e) {
     });
 };
 
-Setup.createNotificationCheckBox = function(value, displayName, parent) {
+Setup.createNotificationCheckBox = function(value, displayName, parent, isChecked) {
 	var label = document.createElement("label");
 	label.className = "my-label";
     var checkBox = document.createElement("input");
     checkBox.type = "checkbox";
     checkBox.name = "notificationCheckBox";
     checkBox.value = value;
+    checkBox.checked = isChecked;
+    Setup.registerCheckBoxHandler(checkBox);
     label.appendChild(checkBox);
 
 	label.appendChild(document.createTextNode(displayName));
@@ -230,6 +292,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // document.getElementById("diyCss").setAttribute("class", "prettyprint lang-css");
 
     Setup.registerBlockOptionHandler();
+    Setup.registerMessageOptionHandler();
     Setup.registerRadioHandler();
     Setup.registerDiyCssHandler();
+    Setup.registerCheckTimeHandler();
 });
