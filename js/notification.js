@@ -38,6 +38,7 @@ Notification.prototype.retrieveUnreadMsg = function() {
 };
 
 Notification.prototype.parseUnreadJSON = function(json) {
+    var self = this;
     var isCreateNotification = false;
     var message = "";
 
@@ -49,14 +50,15 @@ Notification.prototype.parseUnreadJSON = function(json) {
                 message += Global.attrMap[key] + ": " + json[key] + "\n";
             }
         });
+
+        if (isCreateNotification) {
+            console.log(new Date() + ": decide to send a notification.");
+            self.createNotification(message.substring(0, message.lastIndexOf("\n")));
+        } else {
+            console.log(new Date() + ": no notification to send.");
+        }
     };
     Background.getNotificationKeys(getNotifications);
-    if (isCreateNotification) {
-        console.log(new Date() + ": decide to send a notification.");
-        this.createNotification(message.substring(0, message.lastIndexOf("\n")));
-    } else {
-        console.log(new Date() + ": no notification to send.");
-    }
 };
 
 Notification.prototype.createTab = function(callback) {
