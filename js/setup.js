@@ -123,8 +123,10 @@ Setup.registerMessageOptionHandler = function() {
             var div = document.getElementById("notification");
             if (value === "false") {
                 div.style.display = "none";
+                chrome.extension.getBackgroundPage().Background.cancelJob();
             } else {
                 div.style.display = "block";
+                chrome.extension.getBackgroundPage().Background.scheduleGetUnreadMsgJob();
             }
         }, false);
     });

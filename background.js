@@ -59,12 +59,16 @@ Background.retrieveSource = function(details) {
     }
 };
 
-Background.scheduleGetUnreadMsgJob = function() {
+Background.cancelJob = function() {
     // if the job already exists, clear it
     if (Background.scheduledJob) {
         console.log(new Date() + ": clear scheduled job.");
         clearInterval(Background.scheduledJob);
     }
+};
+
+Background.scheduleGetUnreadMsgJob = function() {
+    Background.cancelJob();
 
     var job = function() {
         var notification = new Notification(Background.unreadMsg.baseUrl, Background.unreadMsg.source, Background.unreadMsg.notificationId);
