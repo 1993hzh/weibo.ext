@@ -19,6 +19,7 @@
     },
     "options_ui": {
         "page": "setup.html",
+        "open_in_tab": true,
         "chrome_style": true
     },
     "content_scripts": [
